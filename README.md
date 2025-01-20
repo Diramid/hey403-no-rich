@@ -1,79 +1,71 @@
-# 🌐 Hey 403 - CLI Edition
 
-**Hey 403 - CLI Edition** is a robust command-line tool designed to test domain accessibility through various DNS providers. Built for speed, clarity, and simplicity, it’s the perfect choice for troubleshooting DNS-related issues directly from your terminal. 🚀
+<h1 align="center">
+  🌐 Hey 403 - CLI Edition
+  <br>
+  <sub>⚡ DNS Accessibility Testing Tool ⚡</sub>
+</h1>
 
----
+<div align="center">
+
+[![Stars](https://img.shields.io/github/stars/Diramid/hey-403-cli?logo=starship&color=gold)](https://github.com/Diramid/hey-403-cli/stargazers)
+[![Forks](https://img.shields.io/github/forks/Diramid/hey-403-cli?logo=git&color=9cf)](https://github.com/Diramid/hey-403-cli/forks)
+[![Issues](https://img.shields.io/github/issues/Diramid/hey-403-cli?logo=openbugbounty&color=red)](https://github.com/Diramid/hey-403-cli/issues)
+[![License](https://img.shields.io/github/license/Diramid/hey-403-cli?logo=open-source-initiative&color=green)](https://github.com/Diramid/hey-403-cli/blob/main/LICENSE)
+
+</div>
+
+## 📖 Table of Contents
+- [✨ Features](#-features)
+- [🚀 Quick Start](#-quick-start)
+- [🔧 Usage Examples](#-usage-examples)
+- [🤝 Contributing](#-contributing)
+- [⚖️ License](#️-license)
 
 ## ✨ Features
+| **Feature**         | **Description**                          |
+|----------------------|------------------------------------------|
+| 🚪 CLI First        | Terminal-native interface                |
+| 🌍 15+ Built-in DNS | Preconfigured DNS servers                |
+| ⚡ Parallel Testing  | Concurrent DNS checks                    |
+| 🎨 Colorful Output  | Rich text formatting                     |
+| 📁 Multi-Format Export | CSV/JSON support                       |
 
-- **Command-Line Simplicity**: Seamlessly test domains from your terminal.  
-- **Predefined DNS Providers**: Comes with a curated list of popular DNS servers for comprehensive testing.  
-- **Fast and Efficient**: Lightweight design for quick results.  
-- **Customizable**: Add or modify DNS providers with ease.  
-- **Rich Output**: Organized and color-coded results for better readability, powered by `rich`.  
+## 🚀 Quick Start
+```bash
+# Clone & Install
+git clone https://github.com/Diramid/hey-403-cli.git
+cd hey-403-cli
+pipenv install --deploy
 
----
+# Basic Usage
+pipenv run python hey403.py --url https://example.com
+```
 
-## 🤔 Why Hey 403 - CLI Edition?
+## 🔧 Usage Examples
+```bash
+# Single Domain Test
+python hey403.py --url https://example.com
 
-Whether you’re a developer, network administrator, or infrastructure manager, **Hey 403 - CLI Edition** empowers you with fast, reliable insights into domain accessibility using multiple DNS configurations. It’s lightweight, scriptable, and built with simplicity in mind. 🛠️
+# Custom DNS Check
+python hey403.py --url https://example.com --dns 1.1.1.1
 
----
+# Batch Testing
+python hey403.py --input urls.txt --output results.csv
+```
 
-## 🚀 Getting Started
+## 🤝 Contributing
+```bash
+1. Fork the repository
+2. Create your feature branch:
+   git checkout -b feature/amazing-feature
+3. Commit changes:
+   git commit -m 'Add amazing feature'
+4. Push to branch:
+   git push origin feature/amazing-feature
+5. Open a Pull Request
+```
 
-### Prerequisites
-
-- Python 3.7 or higher. 🔳  
-- Pipenv package manager for dependencies.
-
-### Installation
-
-1. Clone the repository:  
-   ```bash
-   git clone https://github.com/Mohammad222PR/Hey-403.git
-   ```
-
-2. Navigate to the project directory:  
-   ```bash
-   cd Hey-403
-   ```
-
-3. Install dependencies:  
-   ```bash
-   pipenv install --deploy
-   ```
-
-4. Run the tool:  
-   ```bash
-   python hey403.py --url https://example.com
-   ```
-
-### Example Usage
-
-- Test a single domain:
-   ```bash
-   python hey403.py --url https://example.com
-   ```
-
-- Output results to a file:
-   ```bash
-   python hey403.py --url https://example.com > results.txt
-   ```
+## ⚖️ License
+Distributed under MIT License. See `LICENSE` for details.
 
 ---
-
-## 👍 Contributing
-
-Contributions are welcome! If you have ideas for improvements or find a bug, feel free to submit a pull request or open an issue. Check out our [Contributing Guidelines](./CONTRIBUTING.md) to get started. 👨‍💻
-
----
-
-## 📜 License
-
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more details.
-
----
-
-🚨 **Disclaimer**: Use this tool responsibly and only for legitimate purposes. Unauthorized or malicious use is strictly prohibited.
-
