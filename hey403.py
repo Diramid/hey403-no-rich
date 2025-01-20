@@ -1,10 +1,13 @@
 import argparse
 from rich.console import Console
 from rich.progress import Progress
+
+from src.cli.parser import build_parser
 from src.dns import test_dns_with_custom_ip
 from src.table import create_table
 from src.dns_servers import DNS_SERVERS
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
 
 def test_dns(dns, url):
     dns_name = dns["name"]
@@ -17,18 +20,19 @@ def test_dns(dns, url):
 
     return (dns_name, preferred_dns, alternative_dns, status_message, response_time_display)
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Test DNS resolution for a given URL using predefined DNS servers.")
-    parser.add_argument("url", type=str, help="The URL to test.")
+    parser = build_parser()
     args = parser.parse_args()
 
     console = Console()
+
     table = create_table()
 
     with Progress() as progress:
         task = progress.add_task("[cyan]Testing DNS servers...", total=len(DNS_SERVERS))
 
-        with ThreadPoolExecutor() as executor:
+        with ThreadPoolExecutor(max_workers=min(32, len(DNS_SERVERS))) as executor:
             futures = {executor.submit(test_dns, dns, args.url): dns for dns in DNS_SERVERS}
 
             for future in as_completed(futures):
@@ -37,6 +41,7 @@ def main():
                 progress.update(task, advance=1)
 
     console.print(table)
+
 
 if __name__ == "__main__":
     main()
