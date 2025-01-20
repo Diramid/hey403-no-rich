@@ -1,4 +1,3 @@
-
 <h1 align="center">
   🌐 Hey 403 - CLI Edition
   <br>
@@ -20,6 +19,27 @@
 - [🔧 Usage Examples](#-usage-examples)
 - [🤝 Contributing](#-contributing)
 - [⚖️ License](#️-license)
+
+## 🌟 About Hey 403
+**Hey 403 - CLI Edition** is a powerful command-line utility designed to diagnose domain accessibility issues across multiple DNS providers. This tool helps developers, network administrators, and security professionals quickly identify:
+
+- Geo-restrictions and censorship blocks 🚫
+- DNS resolution inconsistencies 🌍
+- Server response variations 🔄
+- Potential connectivity issues 🔍
+
+### Key Capabilities
+- Test domain accessibility through **15+ global DNS servers**
+- Detect **403 Forbidden** and other HTTP errors
+- Compare DNS resolution times ⏱️
+- Identify regional blocking patterns 🗺️
+- Generate machine-readable reports 📊
+
+### Why Use Hey 403?
+- 🚦 **Instant Diagnostics**: Verify domain accessibility in seconds
+- 🌐 **Global Perspective**: Test against worldwide DNS providers
+- 🔧 **Troubleshooting Made Easy**: Pinpoint DNS-related issues quickly
+- 📈 **Performance Metrics**: Measure response times across providers
 
 ## ✨ Features
 | **Feature**         | **Description**                          |
@@ -69,3 +89,7 @@ python hey403.py --input urls.txt --output results.csv
 Distributed under MIT License. See `LICENSE` for details.
 
 ---
+
+> **Note** 📢  
+> Always use this tool responsibly and in compliance with local laws and regulations.  
+> Unauthorized access to computer systems is strictly prohibited.
