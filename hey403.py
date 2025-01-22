@@ -15,10 +15,20 @@ def test_dns(dns, url):
     alternative_dns = dns["alternative"]
 
     status, response_time = test_dns_with_custom_ip(url, preferred_dns)
-    status_message = "[green]Success[/green]" if status != "Failed" else "[red]Failed[/red]"
-    response_time_display = f"{response_time:.4f}" if response_time < float('inf') else "N/A"
+    status_message = (
+        "[green]Success[/green]" if status != "Failed" else "[red]Failed[/red]"
+    )
+    response_time_display = (
+        f"{response_time:.4f}" if response_time < float('inf') else "N/A"
+    )
 
-    return (dns_name, preferred_dns, alternative_dns, status_message, response_time_display)
+    return (
+        dns_name,
+        preferred_dns,
+        alternative_dns,
+        status_message,
+        response_time_display,
+    )
 
 
 def main():
@@ -30,14 +40,33 @@ def main():
     table = create_table()
 
     with Progress() as progress:
-        task = progress.add_task("[cyan]Testing DNS servers...", total=len(DNS_SERVERS))
+        task = progress.add_task(
+            "[cyan]Testing DNS servers...", total=len(DNS_SERVERS)
+        )
 
-        with ThreadPoolExecutor(max_workers=min(32, len(DNS_SERVERS))) as executor:
-            futures = {executor.submit(test_dns, dns, args.url): dns for dns in DNS_SERVERS}
+        with ThreadPoolExecutor(
+            max_workers=min(32, len(DNS_SERVERS))
+        ) as executor:
+            futures = {
+                executor.submit(test_dns, dns, args.url): dns
+                for dns in DNS_SERVERS
+            }
 
             for future in as_completed(futures):
-                dns_name, preferred_dns, alternative_dns, status_message, response_time_display = future.result()
-                table.add_row(dns_name, preferred_dns, alternative_dns, status_message, response_time_display)
+                (
+                    dns_name,
+                    preferred_dns,
+                    alternative_dns,
+                    status_message,
+                    response_time_display,
+                ) = future.result()
+                table.add_row(
+                    dns_name,
+                    preferred_dns,
+                    alternative_dns,
+                    status_message,
+                    response_time_display,
+                )
                 progress.update(task, advance=1)
 
     console.print(table)
