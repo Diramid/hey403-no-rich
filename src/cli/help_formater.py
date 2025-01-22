@@ -62,7 +62,7 @@ class CustomHelpFormatter(argparse.HelpFormatter):
             title="Help Documentation",
             border_style="bright_magenta",
             padding=(1, 4),
-            width=80
+            width=80,
         )
 
         with self.console.capture() as capture:
