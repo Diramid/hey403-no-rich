@@ -55,22 +55,21 @@
 # Clone & Install
 git clone https://github.com/Diramid/hey-403-cli.git
 cd hey-403-cli
-pipenv install --deploy
+pip install uv
 
 # Basic Usage
-pipenv run python hey403.py --url https://example.com
+uv run hey403.py --url https://example.com
 ```
 
 ## 🔧 Usage Examples
 ```bash
-# Single Domain Test
+# Single Domain Test which uv
+uv run hey403.py --url https://example.com
+
+# Single Domain Test which python
 python hey403.py --url https://example.com
 
-# Custom DNS Check
-python hey403.py --url https://example.com --dns 1.1.1.1
 
-# Batch Testing
-python hey403.py --input urls.txt --output results.csv
 ```
 
 ## 🤝 Contributing
