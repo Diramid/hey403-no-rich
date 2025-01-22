@@ -1,5 +1,6 @@
 import time
-import dns.resolver
+from dns import resolver
+from src.network.ban_ips import BAN_IPS
 
 
 def test_dns_with_custom_ip(url: str, dns_ip: str) -> (str, float):
@@ -11,15 +12,24 @@ def test_dns_with_custom_ip(url: str, dns_ip: str) -> (str, float):
     start_time = time.perf_counter()
 
     try:
-        custom_resolver = dns.resolver.Resolver()
+        custom_resolver = resolver.Resolver()
         custom_resolver.nameservers = [dns_ip]
-        custom_resolver.timeout = 10
-        custom_resolver.lifetime = 10
+        custom_resolver.timeout = 5
+        custom_resolver.lifetime = 5
 
         result = custom_resolver.resolve(hostname, 'A', raise_on_no_answer=False)
         response_time = time.perf_counter() - start_time
-        return len(result), response_time
+        ip = result.rrset._rdata_repr()
+        ip = ip[ip.find("<") + 1: ip.find(">")]
 
-    except (dns.resolver.NoAnswer, dns.resolver.NXDOMAIN, dns.resolver.LifetimeTimeout) as e:
-        print(f"Error resolving {hostname} with DNS {dns_ip}: {e}")
-        return "Failed", float('inf')
+        if ip in BAN_IPS:
+            return 451, 0
+        return 200, response_time
+
+    except (
+            resolver.NoAnswer,
+            resolver.NXDOMAIN,
+            resolver.LifetimeTimeout,
+            resolver.NoNameservers,
+    ):
+        return 500, 0
