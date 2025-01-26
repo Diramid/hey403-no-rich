@@ -1,6 +1,6 @@
 import time
 from dns import resolver
-from src.network.ban_ips import BAN_IPS
+from hey403.network.ban_ips import BAN_IPS
 
 
 def test_dns_with_custom_ip(url: str, dns_ip: str) -> (str, float):
