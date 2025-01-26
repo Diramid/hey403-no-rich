@@ -48,44 +48,44 @@
 | 🌍 15+ Built-in DNS | Preconfigured DNS servers                |
 | ⚡ Parallel Testing  | Concurrent DNS checks                    |
 | 🎨 Colorful Output  | Rich text formatting                     |
-| 📁 Multi-Format Export | CSV/JSON support                       |
 
 ## 🚀 Quick Start
 ```bash
-# Clone & Install
-git clone https://github.com/Diramid/hey-403-cli.git
-cd hey-403-cli
-pip install uv
+# Install the package
+pip install hey403
 
-# Basic Usage
-uv run hey403.py --url https://example.com
+# Run the main command
+hey403 --help
 ```
 
 ## 🔧 Usage Examples
 ```bash
-# Single Domain Test which uv
-uv run hey403.py --url https://example.com
-
-# Single Domain Test which python
-python hey403.py --url https://example.com
-
+# Test a single domain
+hey403 example.com
 
 ```
-
 ## 🤝 Contributing
-```bash
 1. Fork the repository
-2. Create your feature branch:
+2. Set up the development environment:
+   ```bash
+   git clone https://github.com/Diramid/hey-403-cli.git
+   cd hey-403-cli
+   pip install -e .[dev]
+   ```
+3. Run tests:
+   ```bash
+   pytest tests/ -v
+   ```
+4. Commit and push your changes:
+   ```bash
    git checkout -b feature/amazing-feature
-3. Commit changes:
    git commit -m 'Add amazing feature'
-4. Push to branch:
    git push origin feature/amazing-feature
+   ```
 5. Open a Pull Request
-```
 
 ## ⚖️ License
-Distributed under MIT License. See `LICENSE` for details.
+Distributed under MIT License. See [LICENSE](https://github.com/Diramid/hey-403-cli/blob/main/LICENSE) for details.
 
 ---
 
