@@ -1,10 +1,10 @@
 from rich.console import Console
 from rich.progress import Progress
 
-from src.cli.parser import build_parser
-from src.dns import test_dns_with_custom_ip
-from src.table import create_table
-from src.network.dns_servers import DNS_SERVERS
+from hey403.cli.parser import build_parser
+from hey403.dns_resolver import test_dns_with_custom_ip
+from hey403.table import create_table
+from hey403.network.dns_servers import DNS_SERVERS
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
