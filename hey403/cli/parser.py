@@ -1,6 +1,6 @@
 import argparse
 
-from hey403.cli.help_formater import CustomHelpFormatter
+from cli.help_formater import CustomHelpFormatter
 
 
 def create_base_parser():
@@ -23,6 +23,13 @@ def add_common_arguments(parser):
     parser.add_argument(
         "url", type=str, help="Target URL/domain to test (e.g., example.com)"
     )
+
+    parser.add_argument(
+        "--set",
+        action="store_true",
+        help="Set Best DNS on system (e.g: Google, Cloudflare)",
+    )
+
     return parser
 
 
