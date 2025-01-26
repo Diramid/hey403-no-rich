@@ -1,0 +1,44 @@
+name: Publish hey-403-cli to PyPI
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: pypi
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install UV
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+    - name: Install project dependencies
+      run: |
+        uv pip install .  
+
+    - name: Install build dependencies
+      run: |
+        uv pip install build 
+
+    - name: Build package
+      run: python -m build
+
+    - name: Publish to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      env:
+        PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }} 
+      with:
+        packages-dir: dist/
