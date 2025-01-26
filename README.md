@@ -6,10 +6,10 @@
 
 <div align="center">
 
-[![Stars](https://img.shields.io/github/stars/Diramid/hey-403-cli?logo=starship&color=gold)](https://github.com/Diramid/hey-403-cli/stargazers)
-[![Forks](https://img.shields.io/github/forks/Diramid/hey-403-cli?logo=git&color=9cf)](https://github.com/Diramid/hey-403-cli/forks)
-[![Issues](https://img.shields.io/github/issues/Diramid/hey-403-cli?logo=openbugbounty&color=red)](https://github.com/Diramid/hey-403-cli/issues)
-[![License](https://img.shields.io/github/license/Diramid/hey-403-cli?logo=open-source-initiative&color=green)](https://github.com/Diramid/hey-403-cli/blob/main/LICENSE)
+[![Stars](https://img.shields.io/github/stars/Diramid/hey-403-cli?logo=starship&color=gold)](https://github.com/Diramid/hey403/stargazers)
+[![Forks](https://img.shields.io/github/forks/Diramid/hey-403-cli?logo=git&color=9cf)](https://github.com/Diramid/hey403/forks)
+[![Issues](https://img.shields.io/github/issues/Diramid/hey-403-cli?logo=openbugbounty&color=red)](https://github.com/Diramid/hey403/issues)
+[![License](https://img.shields.io/github/license/Diramid/hey-403-cli?logo=open-source-initiative&color=green)](https://github.com/Diramid/hey403/blob/main/LICENSE)
 
 </div>
 
@@ -85,7 +85,7 @@ hey403 example.com
 5. Open a Pull Request
 
 ## ⚖️ License
-Distributed under MIT License. See [LICENSE](https://github.com/Diramid/hey-403-cli/blob/main/LICENSE) for details.
+Distributed under MIT License. See [LICENSE](https://github.com/Diramid/hey403/blob/main/LICENSE) for details.
 
 ---
 
