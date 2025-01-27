@@ -1,7 +1,8 @@
-from rich.console import Console
-from rich.text import Text
-from rich.panel import Panel
 import argparse
+
+from rich.console import Console
+from rich.panel import Panel
+from rich.text import Text
 
 
 class CustomHelpFormatter(argparse.HelpFormatter):
@@ -40,6 +41,8 @@ class CustomHelpFormatter(argparse.HelpFormatter):
         help_text.append("     Show this help message 🆘\n  ")
         help_text.append("--url", style="bold cyan")
         help_text.append("          Alternate URL specification\n\n")
+        help_text.append("  --set", style="bold cyan")
+        help_text.append("          Set Best DNS on system (e.g: Google, Cloudflare)\n\n")
 
         # Examples
         help_text.append("Examples:", style="bold yellow")
@@ -51,6 +54,18 @@ class CustomHelpFormatter(argparse.HelpFormatter):
         help_text.append(" ")
         help_text.append("--url", style="bold cyan")
         help_text.append(" google.com 💫\n", style="bold green")
+
+        help_text.append("\n  ")
+        help_text.append("hey403", style="bold cyan")
+        help_text.append(" ")
+        help_text.append(" google.com ", style="bold green")
+        help_text.append(" --set \n", style="bold green")
+
+        help_text.append("  hey403", style="bold cyan")
+        help_text.append(" ")
+        help_text.append("--url", style="bold cyan")
+        help_text.append(" google.com ", style="bold green")
+        help_text.append(" --set \n", style="bold green")
 
         # Footer
         help_text.append("\n")
