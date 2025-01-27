@@ -1,37 +1,12 @@
-import ctypes
-from fileinput import lineno
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from rich.console import Console
 from rich.progress import Progress
 
-from table import create_table
 from cli.parser import build_parser
+from hey403.services.dns_resolver import set_dns, test_dns
+from hey403.utils.table import create_table
 from network.dns_servers import DNS_SERVERS
-from dns_resolver import test_dns_with_custom_ip, set_dns
-
-from concurrent.futures import ThreadPoolExecutor, as_completed
-
-
-def test_dns(dns, url):
-    dns_name = dns["name"]
-    preferred_dns = dns["preferred"]
-    alternative_dns = dns["alternative"]
-
-    status, response_time = test_dns_with_custom_ip(url, preferred_dns)
-    status_message = (
-        "[green]Success[/green]" if status == 200 else "[red]Failed[/red]"
-    )
-    response_time_display = (
-        f"{response_time:.4f}" if response_time < float("inf") else "N/A"
-    )
-
-    return (
-        dns_name,
-        preferred_dns,
-        alternative_dns,
-        status_message,
-        response_time_display,
-    )
 
 
 def main():
@@ -43,13 +18,14 @@ def main():
     table = create_table()
 
     dns_success_list = list()
+
     with Progress() as progress:
         task = progress.add_task(
             "[cyan]Testing DNS servers...", total=len(DNS_SERVERS)
         )
 
         with ThreadPoolExecutor(
-            max_workers=min(32, len(DNS_SERVERS))
+                max_workers=min(32, len(DNS_SERVERS))
         ) as executor:
             futures = {
                 executor.submit(test_dns, dns, args.url): dns
