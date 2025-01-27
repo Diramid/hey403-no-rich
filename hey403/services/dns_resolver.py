@@ -1,3 +1,4 @@
+import logging
 import os
 import platform
 import subprocess
@@ -57,19 +58,20 @@ def set_dns(preferred_dns, alternative_dns=None):
                 if alternative_dns:
                     dns_file.write(f"nameserver {alternative_dns}\n")
         else:
-            print("Error: Please run with sudo!")
+            logging.error("Please run with sudo!")
             sys.exit(1)
 
     elif system_platform == "Windows":
         if not is_admin():
-            print("Error: Please run as Administrator!")
+            logging.error("Please run as Administrator!")
+            logging.warning("You can run cmd (command line) or power shell as Administrator! ")
             sys.exit(1)
 
         try:
             interface = get_activate_interface()
 
             if not interface:
-                print("Error: No active interface found!")
+                logging.error("No active interface found!")
                 sys.exit(1)
 
             interface_name = interface[0]
@@ -86,10 +88,10 @@ def set_dns(preferred_dns, alternative_dns=None):
                     check=True,
                 )
 
-            print("DNS successfully set!")
+            logging.info("DNS successfully set!")
 
         except subprocess.CalledProcessError as e:
-            print(f"Error setting DNS: {e}")
+            logging.error(f"Error setting DNS: {e}")
             sys.exit(1)
 
 
