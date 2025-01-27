@@ -63,6 +63,9 @@ hey403 --help
 # Test a single domain
 hey403 example.com
 
+# Set best dns for current domain
+hey403 example.com --set
+
 ```
 ## 🤝 Contributing
 1. Fork the repository
