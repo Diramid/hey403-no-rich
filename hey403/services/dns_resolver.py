@@ -25,22 +25,20 @@ def test_dns_with_custom_ip(url: str, dns_ip: str) -> (str, float):
         custom_resolver.timeout = 5
         custom_resolver.lifetime = 5
 
-        result = custom_resolver.resolve(
-            hostname, "A", raise_on_no_answer=False
-        )
+        result = custom_resolver.resolve(hostname, "A", raise_on_no_answer=False)
         response_time = time.perf_counter() - start_time
         ip = result.rrset._rdata_repr()
-        ip = ip[ip.find("<") + 1: ip.find(">")]
+        ip = ip[ip.find("<") + 1 : ip.find(">")]
 
         if ip in BAN_IPS:
             return 451, 0
         return 200, response_time
 
     except (
-            resolver.NoAnswer,
-            resolver.NXDOMAIN,
-            resolver.LifetimeTimeout,
-            resolver.NoNameservers,
+        resolver.NoAnswer,
+        resolver.NXDOMAIN,
+        resolver.LifetimeTimeout,
+        resolver.NoNameservers,
     ):
         return 500, 0
 
@@ -64,7 +62,9 @@ def set_dns(preferred_dns, alternative_dns=None):
     elif system_platform == "Windows":
         if not is_admin():
             logging.error("Please run as Administrator!")
-            logging.warning("You can run cmd (command line) or power shell as Administrator! ")
+            logging.warning(
+                "You can run cmd (command line) or power shell as Administrator! "
+            )
             sys.exit(1)
 
         try:
@@ -93,6 +93,63 @@ def set_dns(preferred_dns, alternative_dns=None):
         except subprocess.CalledProcessError as e:
             logging.error(f"Error setting DNS: {e}")
             sys.exit(1)
+    elif system_platform == "Darwin":
+        try:
+            wifi_command = "networksetup -setdnsservers Wi-Fi"
+            ethernet_command = "networksetup -setdnsservers Ethernet"
+
+            try:
+                subprocess.run(
+                    f"networksetup -getdnsservers Wi-Fi",
+                    shell=True,
+                    check=True,
+                    stdout=subprocess.PIPE,
+                )
+                connection_type = "Wi-Fi"
+            except subprocess.CalledProcessError:
+                try:
+                    subprocess.run(
+                        f"networksetup -getdnsservers Ethernet",
+                        shell=True,
+                        check=True,
+                        stdout=subprocess.PIPE,
+                    )
+                    connection_type = "Ethernet"
+                except subprocess.CalledProcessError:
+                    logging.error(
+                        "No active network interfaces (Wi-Fi or Ethernet) found!"
+                    )
+                    sys.exit(1)
+
+            if connection_type == "Wi-Fi":
+                logging.info("Configuring DNS for Wi-Fi...")
+                subprocess.run(
+                    f"{wifi_command} {preferred_dns}", shell=True, check=True
+                )
+                if alternative_dns:
+                    subprocess.run(
+                        f"{wifi_command} {preferred_dns} {alternative_dns}",
+                        shell=True,
+                        check=True,
+                    )
+
+            elif connection_type == "Ethernet":
+                logging.info("Configuring DNS for Ethernet...")
+                subprocess.run(
+                    f"{ethernet_command} {preferred_dns}", shell=True, check=True
+                )
+                if alternative_dns:
+                    subprocess.run(
+                        f"{ethernet_command} {preferred_dns} {alternative_dns}",
+                        shell=True,
+                        check=True,
+                    )
+
+            logging.info("DNS successfully set!")
+
+        except subprocess.CalledProcessError as e:
+            logging.error(f"Error while setting DNS: {e}")
+            sys.exit(1)
 
 
 def test_dns(dns, url):
@@ -101,9 +158,7 @@ def test_dns(dns, url):
     alternative_dns = dns["alternative"]
 
     status, response_time = test_dns_with_custom_ip(url, preferred_dns)
-    status_message = (
-        "[green]Success[/green]" if status == 200 else "[red]Failed[/red]"
-    )
+    status_message = "[green]Success[/green]" if status == 200 else "[red]Failed[/red]"
     response_time_display = (
         f"{response_time:.4f}" if response_time < float("inf") else "N/A"
     )
