@@ -18,6 +18,23 @@ def get_activate_interface():
         return []
 
 
+def get_active_connections():
+    try:
+        result = subprocess.check_output(
+            ["nmcli", "-t", "-f", "NAME", "connection", "show", "--active"], text=True
+        ).splitlines()
+        active_connections = [
+            connection for connection in result
+        ]
+        return active_connections
+    except FileNotFoundError as e:
+        print(f"Failed to get active connections, dependency {e.filename} is not installed")
+        return []
+    except Exception as e:
+        print(f"Failed to get active connections: {e}")
+        return []
+
+
 def is_admin():
     try:
         return ctypes.windll.shell32.IsUserAnAdmin()
