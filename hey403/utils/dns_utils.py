@@ -2,6 +2,24 @@ import ctypes
 import logging
 import subprocess
 
+import requests
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+
+def get_status_code_from_request(ip: str):
+    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
+    try:
+        response = requests.get(
+            url=f"https://{ip}",
+            timeout=10,
+            verify=False
+        )
+        return response.status_code
+
+    except requests.exceptions.RequestException as e:
+        return None
+
 
 def get_activate_interface():
     try:
