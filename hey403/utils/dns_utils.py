@@ -1,4 +1,5 @@
 import ctypes
+import logging
 import subprocess
 
 
@@ -19,6 +20,10 @@ def get_activate_interface():
 
 
 def get_active_connections():
+    """
+    Retrieves the names of active network connections to monitor and manage current network activity.
+    This helps in understanding which networks are currently in use on the system.
+    """
     try:
         result = subprocess.check_output(
             ["nmcli", "-t", "-f", "NAME", "connection", "show", "--active"], text=True
@@ -33,6 +38,42 @@ def get_active_connections():
     except Exception as e:
         print(f"Failed to get active connections: {e}")
         return []
+
+
+def run_command(command: [str], error_message: str) -> bool:
+    """
+    Executes a shell command to perform an action and logs an error if the command fails.
+    """
+    try:
+        subprocess.run(command, check=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        logging.error(f"{error_message}: {e}")
+        return False
+
+
+def configure_dns(connection: str, dns_servers: str) -> bool:
+    """
+    Sets custom DNS servers for a network connection and ensures the changes take effect.
+    """
+    commands = [
+        (
+            ["nmcli", "connection", "modify", connection, "ipv4.dns", dns_servers],
+            f"Failed to set DNS for connection {connection}"
+        ),
+        (
+            ["nmcli", "connection", "modify", connection, "ipv4.ignore-auto-dns", "yes"],
+            f"Failed to ignore auto-DNS on connection {connection}"
+        ),
+        (
+            ["systemctl", "restart", "NetworkManager"],
+            "Failed to restart NetworkManager"
+        )
+    ]
+    for command, error_message in commands:
+        if not run_command(command, error_message):
+            return False
+    return True
 
 
 def is_admin():
