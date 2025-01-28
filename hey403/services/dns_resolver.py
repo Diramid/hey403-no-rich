@@ -4,11 +4,13 @@ import platform
 import subprocess
 import sys
 import time
+from urllib.parse import urlparse
 
 from dns import resolver
 
 from hey403.network.ban_ips import BAN_IPS
-from hey403.utils.dns_utils import is_admin, get_activate_interface, get_active_connections, configure_dns
+from hey403.utils.dns_utils import is_admin, get_activate_interface, get_active_connections, configure_dns, \
+    get_status_code_from_request
 
 
 def test_dns_with_custom_ip(url: str, dns_ip: str) -> (str, float):
@@ -16,8 +18,12 @@ def test_dns_with_custom_ip(url: str, dns_ip: str) -> (str, float):
     Tests the DNS configuration by sending a request to a specific URL using a custom DNS IP.
     Returns the number of records found and the response time.
     """
-    hostname = url.split("//")[-1].split("/")[0]
+    parsed_url = urlparse(url)
+    hostname = parsed_url.hostname
+
     start_time = time.perf_counter()
+
+    dns_failure_time = 0.0
 
     try:
         custom_resolver = resolver.Resolver()
@@ -28,19 +34,26 @@ def test_dns_with_custom_ip(url: str, dns_ip: str) -> (str, float):
         result = custom_resolver.resolve(hostname, "A", raise_on_no_answer=False)
         response_time = time.perf_counter() - start_time
         ip = result.rrset._rdata_repr()
-        ip = ip[ip.find("<") + 1 : ip.find(">")]
+        ip = ip[ip.find("<") + 1: ip.find(">")]
 
         if ip in BAN_IPS:
-            return 451, 0
+            return 451, dns_failure_time
+
+        status_code = get_status_code_from_request(ip)
+
+        if status_code == 403:
+            return 403, dns_failure_time
+
         return 200, response_time
 
+
     except (
-        resolver.NoAnswer,
-        resolver.NXDOMAIN,
-        resolver.LifetimeTimeout,
-        resolver.NoNameservers,
+            resolver.NoAnswer,
+            resolver.NXDOMAIN,
+            resolver.LifetimeTimeout,
+            resolver.NoNameservers,
     ):
-        return 500, 0
+        return 500, dns_failure_time
 
 
 def set_dns(preferred_dns, alternative_dns=None):
