@@ -8,7 +8,7 @@ import time
 from dns import resolver
 
 from hey403.network.ban_ips import BAN_IPS
-from hey403.utils.dns_utils import is_admin, get_activate_interface, get_active_connections
+from hey403.utils.dns_utils import is_admin, get_activate_interface, get_active_connections, configure_dns
 
 
 def test_dns_with_custom_ip(url: str, dns_ip: str) -> (str, float):
@@ -44,6 +44,12 @@ def test_dns_with_custom_ip(url: str, dns_ip: str) -> (str, float):
 
 
 def set_dns(preferred_dns, alternative_dns=None):
+    """
+    Configures DNS settings for the current system based on the platform.
+
+    Supports Linux, Windows, and macOS (Darwin) by setting the preferred and optional alternative
+    DNS servers for the active network connection or interface.
+    """
     system_platform = platform.system()
 
     if system_platform == "Linux":
@@ -58,29 +64,12 @@ def set_dns(preferred_dns, alternative_dns=None):
             if alternative_dns:
                 dns_servers += f" {alternative_dns}"
 
-            try:
-                # Setting the DNS
-                subprocess.run(
-                    ["nmcli", "connection", "modify", active_connection, "ipv4.dns", f"{dns_servers}"],
-                    check=True
-                )
-
-                # Ignoring auto DNS change
-                subprocess.run(
-                    ["nmcli", "connection", "modify", active_connection, "ipv4.ignore-auto-dns", "yes"],
-                    check=True
-                )
-
-                # Restarting NetworkManager service
-                subprocess.run(
-                    ["systemctl", "restart", "NetworkManager"],
-                    check=True
-                )
-                logging.info("DNS successfully set!")
-                sys.exit(0)
-            except subprocess.CalledProcessError as e:
-                logging.error(f"Error setting DNS: {e}")
+            result = configure_dns(connection=active_connection, dns_servers=dns_servers)
+            if not result:
+                logging.error(f"Failed to configure DNS({dns_servers}) on connection {active_connection}. exit code: 1")
                 sys.exit(1)
+            logging.info(f"DNS successfully set for connection: {active_connection}!")
+            sys.exit(0)
         else:
             logging.error("Please run with sudo!")
             sys.exit(1)
