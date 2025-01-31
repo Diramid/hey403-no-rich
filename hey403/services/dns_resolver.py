@@ -1,7 +1,5 @@
 import logging
-import os
 import platform
-import subprocess
 import sys
 import time
 from urllib.parse import urlparse
@@ -9,8 +7,8 @@ from urllib.parse import urlparse
 from dns import resolver
 
 from hey403.network.ban_ips import BAN_IPS
-from hey403.utils.dns_utils import is_admin, get_activate_interface, get_active_connections, configure_dns, \
-    get_status_code_from_request
+from hey403.utils.dns_utils import get_status_code_from_request, configure_linux_dns, configure_windows_dns, \
+    configure_mac_dns
 
 
 def test_dns_with_custom_ip(url: str, dns_ip: str) -> (str, float):
@@ -46,7 +44,6 @@ def test_dns_with_custom_ip(url: str, dns_ip: str) -> (str, float):
 
         return 200, response_time
 
-
     except (
             resolver.NoAnswer,
             resolver.NXDOMAIN,
@@ -56,130 +53,16 @@ def test_dns_with_custom_ip(url: str, dns_ip: str) -> (str, float):
         return 500, dns_failure_time
 
 
-def set_dns(preferred_dns, alternative_dns=None):
-    """
-    Configures DNS settings for the current system based on the platform.
-
-    Supports Linux, Windows, and macOS (Darwin) by setting the preferred and optional alternative
-    DNS servers for the active network connection or interface.
-    """
+def set_dns(preferred_dns: str, alternative_dns: str | None = None) -> None:
     system_platform = platform.system()
+    configurators = {
+        "Linux": configure_linux_dns,
+        "Windows": configure_windows_dns,
+        "Darwin": configure_mac_dns,
+    }
 
-    if system_platform == "Linux":
-        if os.geteuid() == 0:
-            active_connections = get_active_connections()
-            if not active_connections:
-                logging.error("No active network connections found.")
-                sys.exit(1)
-            active_connection = active_connections[0]
-
-            dns_servers = preferred_dns
-            if alternative_dns:
-                dns_servers += f" {alternative_dns}"
-
-            result = configure_dns(connection=active_connection, dns_servers=dns_servers)
-            if not result:
-                logging.error(f"Failed to configure DNS({dns_servers}) on connection {active_connection}. exit code: 1")
-                sys.exit(1)
-            logging.info(f"DNS successfully set for connection: {active_connection}!")
-            sys.exit(0)
-        else:
-            logging.error("Please run with sudo!")
-            sys.exit(1)
-
-    elif system_platform == "Windows":
-        if not is_admin():
-            logging.error("Please run as Administrator!")
-            logging.warning(
-                "You can run cmd (command line) or power shell as Administrator! "
-            )
-            sys.exit(1)
-
-        try:
-            interface = get_activate_interface()
-
-            if not interface:
-                logging.error("No active interface found!")
-                sys.exit(1)
-
-            interface_name = interface[0]
-            subprocess.run(
-                f'netsh interface ip set dns "{interface_name}" static {preferred_dns} primary',
-                shell=True,
-                check=True,
-            )
-
-            if alternative_dns:
-                subprocess.run(
-                    f'netsh interface ip add dns "{interface_name}" {alternative_dns} index=2',
-                    shell=True,
-                    check=True,
-                )
-
-            logging.info("DNS successfully set!")
-
-        except subprocess.CalledProcessError as e:
-            logging.error(f"Error setting DNS: {e}")
-            sys.exit(1)
-
-    elif system_platform == "Darwin":
-        try:
-            wifi_command = "networksetup -setdnsservers Wi-Fi"
-            ethernet_command = "networksetup -setdnsservers Ethernet"
-
-            try:
-                subprocess.run(
-                    f"networksetup -getdnsservers Wi-Fi",
-                    shell=True,
-                    check=True,
-                    stdout=subprocess.PIPE,
-                )
-                connection_type = "Wi-Fi"
-            except subprocess.CalledProcessError:
-                try:
-                    subprocess.run(
-                        f"networksetup -getdnsservers Ethernet",
-                        shell=True,
-                        check=True,
-                        stdout=subprocess.PIPE,
-                    )
-                    connection_type = "Ethernet"
-                except subprocess.CalledProcessError:
-                    logging.error(
-                        "No active network interfaces (Wi-Fi or Ethernet) found!"
-                    )
-                    sys.exit(1)
-
-            if connection_type == "Wi-Fi":
-                logging.info("Configuring DNS for Wi-Fi...")
-                subprocess.run(
-                    f"{wifi_command} {preferred_dns}", shell=True, check=True
-                )
-                if alternative_dns:
-                    subprocess.run(
-                        f"{wifi_command} {preferred_dns} {alternative_dns}",
-                        shell=True,
-                        check=True,
-                    )
-
-            elif connection_type == "Ethernet":
-                logging.info("Configuring DNS for Ethernet...")
-                subprocess.run(
-                    f"{ethernet_command} {preferred_dns}", shell=True, check=True
-                )
-                if alternative_dns:
-                    subprocess.run(
-                        f"{ethernet_command} {preferred_dns} {alternative_dns}",
-                        shell=True,
-                        check=True,
-                    )
-
-            logging.info("DNS successfully set!")
-
-        except subprocess.CalledProcessError as e:
-            logging.error(f"Error while setting DNS: {e}")
-            sys.exit(1)
-
+    if configurator := configurators.get(system_platform):
+        configurator(preferred_dns, alternative_dns)
     else:
         logging.error(f"Unsupported platform: {system_platform}")
         sys.exit(1)
