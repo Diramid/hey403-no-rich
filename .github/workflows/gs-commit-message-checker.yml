@@ -16,16 +16,19 @@ jobs:
       - name: Validate Commit Format
         uses: gsactions/commit-message-checker@v2
         with:
-          pattern: '^(?<type>feat|fix|build|chore|ci|docs|style|refactor|perf|test)(\((?<scope>.+)\))?(?<breaking>!)?: (?<subject>.+)$(\n\n.*BREAKING CHANGE: .*)?'
-          flags: 'gm'
+          pattern: |
+            ^(?<type>feat|fix|docs|style|refactor|perf|test|chore|ci|build)
+            (\((?<scope>.+)\))?
+            (?<breaking>!)?:
+            \s(?<subject>.+)$
+            (\n\n.*BREAKING CHANGE: .*)?$
+          flags: 'gmx'
           error: |
-            Invalid commit message format. Must follow:
-            <type>[optional scope]: <description>
-            [optional body]
-            [optional footer(s)]
-            
-            Allowed types: feat, fix, build, chore, ci, docs, style, refactor, perf, test
-            Breaking changes require ! after type/scope or 'BREAKING CHANGE:' in footer
+            Invalid commit message! Use conventional commit format
+            Allowed types: feat|fix|docs|style|refactor|perf|test|chore|ci|build
+            Breaking changes require ! or BREAKING CHANGE footer
+          checkAllCommitMessages: true
+          accessToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check Breaking Change Format
         uses: gsactions/commit-message-checker@v2
