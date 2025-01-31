@@ -1,0 +1,68 @@
+name: 'Commit & Branch Policy Check'
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+  pull_request_target:
+    types: [opened, edited, reopened, synchronize]
+  push:
+    branches: [main, 'releases/*']
+
+jobs:
+  commit-check:
+    name: Commit Message Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate Commit Format
+        uses: gsactions/commit-message-checker@v2
+        with:
+          pattern: '^(?<type>feat|fix|build|chore|ci|docs|style|refactor|perf|test)(\((?<scope>.+)\))?(?<breaking>!)?: (?<subject>.+)$(\n\n.*BREAKING CHANGE: .*)?'
+          flags: 'gm'
+          error: |
+            Invalid commit message format. Must follow:
+            <type>[optional scope]: <description>
+            [optional body]
+            [optional footer(s)]
+            
+            Allowed types: feat, fix, build, chore, ci, docs, style, refactor, perf, test
+            Breaking changes require ! after type/scope or 'BREAKING CHANGE:' in footer
+
+      - name: Check Breaking Change Format
+        uses: gsactions/commit-message-checker@v2
+        with:
+          pattern: '^BREAKING CHANGE: .+$'
+          error: Breaking changes must use 'BREAKING CHANGE:' prefix in footer
+          checkAllCommitMessages: true
+          accessToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check Line Length (72 chars)
+        uses: gsactions/commit-message-checker@v2
+        with:
+          pattern: '^[^#].{73,}'
+          error: Line length exceeds 72 characters
+          checkAllCommitMessages: true
+          accessToken: ${{ secrets.GITHUB_TOKEN }}
+
+  branch-check:
+    name: Branch Name Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate Branch Name
+        uses: gsactions/commit-message-checker@v2
+        with:
+          pattern: ^(feature|bugfix|hotfix|release|docs)\/([a-z0-9\-]+)(-\d+)?$
+          error: |
+            Invalid branch name! Must follow:
+            <prefix>/<description>-<issue?>
+            
+            Allowed prefixes:
+            - feature/ (new features)
+            - bugfix/ (bug fixes)
+            - hotfix/ (critical fixes)
+            - release/ (release prep)
+            - docs/ (documentation)
+            
+            Examples:
+            - feature/new-authentication-flow
+            - bugfix/123-fix-login-issue
+            - hotfix/critical-security-patch
