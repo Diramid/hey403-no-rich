@@ -1,6 +1,6 @@
 import argparse
 
-from cli.help_formater import CustomHelpFormatter
+from hey403.cli.help_formater import CustomHelpFormatter
 
 
 def create_base_parser():

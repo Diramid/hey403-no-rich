@@ -7,7 +7,7 @@ from hey403.cli.parser import build_parser
 from hey403.services.dns_resolver import set_dns, test_dns
 from hey403.utils.network_utils import check_internet_connection
 from hey403.utils.table import create_table
-from network.dns_servers import DNS_SERVERS
+from hey403.network.dns_servers import DNS_SERVERS
 
 
 def main():
