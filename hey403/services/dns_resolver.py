@@ -10,14 +10,34 @@ from hey403.network.ban_ips import BAN_IPS
 from hey403.utils.dns_utils import get_status_code_from_request, configure_linux_dns, configure_windows_dns, \
     configure_mac_dns
 
+def ensure_protocol(url: str) -> str:
+    """
+    Ensure the URL has a protocol (http:// or https://).
+    If not, add https:// by default.
+    """
+    parsed_url = urlparse(url)
+    if not parsed_url.scheme:
+        return f"https://{url}"
+    return url
 
 def test_dns_with_custom_ip(url: str, dns_ip: str) -> (str, float):
     """
     Tests the DNS configuration by sending a request to a specific URL using a custom DNS IP.
     Returns the number of records found and the response time.
     """
+    if len(sys.argv) < 2:
+        print("Usage: python main.py <url>")
+        sys.exit(1)
+
+    url = sys.argv[1]
+    url = ensure_protocol(url)
+
     parsed_url = urlparse(url)
     hostname = parsed_url.hostname
+
+    if hostname is None:
+        logging.error(f"Invalid URL: {url}")
+        return 500, 0.0
 
     start_time = time.perf_counter()
 
