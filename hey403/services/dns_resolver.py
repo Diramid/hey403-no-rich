@@ -77,11 +77,8 @@ def set_dns(preferred_dns: str, alternative_dns: str | None = None) -> None:
     dns_manager.configure_dns(preferred_dns, alternative_dns)
 
 
-    if configurator := configurators.get(system_platform):
-        configurator(preferred_dns, alternative_dns)
-    else:
-        logging.error(f"Unsupported platform: {system_platform}")
-        sys.exit(1)
+def get_current_dns() -> str:
+    return dns_manager.get_current_dns()
 
 
 def test_dns(dns, url):
