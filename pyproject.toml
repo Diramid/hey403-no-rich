@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hey403"
-version = "1.0.3"
+version = "1.1.1"
 description = "DNS accessibility testing tool for identifying 403 errors and network restrictions"
 readme = "README.md"
 requires-python = ">=3.10"
