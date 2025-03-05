@@ -74,12 +74,8 @@ def test_dns_with_custom_ip(url: str, dns_ip: str) -> (str, float):
 
 
 def set_dns(preferred_dns: str, alternative_dns: str | None = None) -> None:
-    system_platform = platform.system()
-    configurators = {
-        "Linux": configure_linux_dns,
-        "Windows": configure_windows_dns,
-        "Darwin": configure_mac_dns,
-    }
+    dns_manager.configure_dns(preferred_dns, alternative_dns)
+
 
     if configurator := configurators.get(system_platform):
         configurator(preferred_dns, alternative_dns)
