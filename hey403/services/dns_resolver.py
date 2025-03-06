@@ -1,7 +1,6 @@
 import logging
-import platform
-import sys
 import time
+from typing import Tuple
 from urllib.parse import urlparse
 
 from dns import resolver
@@ -22,18 +21,13 @@ def ensure_protocol(url: str) -> str:
         return f"https://{url}"
     return url
 
-def test_dns_with_custom_ip(url: str, dns_ip: str) -> (str, float):
+
+def test_dns_with_custom_ip(url: str, dns_ip: str) -> Tuple[int, float]:
     """
     Tests the DNS configuration by sending a request to a specific URL using a custom DNS IP.
-    Returns the number of records found and the response time.
+    Returns the status code and response time.
     """
-    if len(sys.argv) < 2:
-        print("Usage: python main.py <url>")
-        sys.exit(1)
-
-    url = sys.argv[1]
     url = ensure_protocol(url)
-
     parsed_url = urlparse(url)
     hostname = parsed_url.hostname
 
@@ -42,7 +36,6 @@ def test_dns_with_custom_ip(url: str, dns_ip: str) -> (str, float):
         return 500, 0.0
 
     start_time = time.perf_counter()
-
     dns_failure_time = 0.0
 
     try:
@@ -54,23 +47,22 @@ def test_dns_with_custom_ip(url: str, dns_ip: str) -> (str, float):
         result = custom_resolver.resolve(hostname, "A", raise_on_no_answer=False)
         response_time = time.perf_counter() - start_time
         ip = result.rrset._rdata_repr()
-        ip = ip[ip.find("<") + 1: ip.find(">")]
+        ip = ip[ip.find("<") + 1 : ip.find(">")]
 
         if ip in BAN_IPS:
             return 451, dns_failure_time
 
         status_code = get_status_code_from_request(ip)
-
         if status_code == 403:
             return 403, dns_failure_time
 
         return 200, response_time
 
     except (
-            resolver.NoAnswer,
-            resolver.NXDOMAIN,
-            resolver.LifetimeTimeout,
-            resolver.NoNameservers,
+        resolver.NoAnswer,
+        resolver.NXDOMAIN,
+        resolver.LifetimeTimeout,
+        resolver.NoNameservers,
     ):
         return 500, dns_failure_time
 
@@ -83,11 +75,11 @@ def get_current_dns() -> str:
     return dns_manager.get_current_dns()
 
 
-def test_dns(dns, url):
 def unset_dns() -> None:
     dns_manager.unset_dns()
 
 
+def test_dns(dns: dict, url: str) -> Tuple[str, str, str, str, str]:
     dns_name = dns["name"]
     preferred_dns = dns["preferred"]
     alternative_dns = dns["alternative"]
