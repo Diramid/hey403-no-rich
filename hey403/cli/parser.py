@@ -21,13 +21,30 @@ def add_common_arguments(parser):
     )
 
     parser.add_argument(
-        "url", type=str, help="Target URL/domain to test (e.g., example.com)"
+        "url",
+        type=str,
+        nargs="?",
+        default=None,
+        help="Target URL/domain to test (e.g., example.com)",
     )
 
     parser.add_argument(
         "--set",
         action="store_true",
         help="Set Best DNS on system (e.g: Google, Cloudflare)",
+    )
+
+    parser.add_argument(
+        "--unset",
+        action="store_true",
+        help="Unset Current DNS on system",
+    )
+
+    parser.add_argument(
+        "-c",
+        "--current-dns",
+        action="store_true",
+        help="Get Current DNS on system",
     )
 
     return parser
