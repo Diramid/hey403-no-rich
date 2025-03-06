@@ -7,8 +7,10 @@ from urllib.parse import urlparse
 from dns import resolver
 
 from hey403.network.ban_ips import BAN_IPS
-from hey403.utils.dns_utils import get_status_code_from_request, configure_linux_dns, configure_windows_dns, \
-    configure_mac_dns
+from hey403.utils.dns_utils import get_status_code_from_request, DNSManager
+
+dns_manager = DNSManager()
+
 
 def ensure_protocol(url: str) -> str:
     """
@@ -82,6 +84,10 @@ def get_current_dns() -> str:
 
 
 def test_dns(dns, url):
+def unset_dns() -> None:
+    dns_manager.unset_dns()
+
+
     dns_name = dns["name"]
     preferred_dns = dns["preferred"]
     alternative_dns = dns["alternative"]
