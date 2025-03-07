@@ -1,25 +1,13 @@
 import argparse
 
-from hey403.cli.help_formater import CustomHelpFormatter
-
 
 def create_base_parser():
     return argparse.ArgumentParser(
         description="Hey 404 DNS Analyzer",
-        add_help=False,
-        formatter_class=CustomHelpFormatter,
-    )
+        add_help=False)
 
 
 def add_common_arguments(parser):
-    parser.add_argument(
-        "-h",
-        "--help",
-        action="help",
-        default=argparse.SUPPRESS,
-        help="Show this help message",
-    )
-
     parser.add_argument(
         "url",
         type=str,

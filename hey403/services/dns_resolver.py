@@ -85,7 +85,7 @@ def test_dns(dns: dict, url: str) -> Tuple[str, str, str, str, str]:
     alternative_dns = dns["alternative"]
 
     status, response_time = test_dns_with_custom_ip(url, preferred_dns)
-    status_message = "[green]Success[/green]" if status == 200 else "[red]Failed[/red]"
+    status_message = "Success" if status == 200 else "Failed"
     response_time_display = (
         f"{response_time:.4f}" if response_time < float("inf") else "N/A"
     )
