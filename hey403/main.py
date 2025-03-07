@@ -54,7 +54,6 @@ def main():
                         status_message,
                         response_time_display,
                     ) = future.result()
-                    # Simplify status_message for output
                     status = "Success" if "Success" in status_message else "Failed"
                     result = [
                         dns_name,

@@ -8,13 +8,6 @@ def create_base_parser():
 
 
 def add_common_arguments(parser):
-    parser.add_argument(
-        "url",
-        type=str,
-        nargs="?",
-        default=None,
-        help="Target URL/domain to test (e.g., example.com)",
-    )
 
     parser.add_argument(
         "--set",
