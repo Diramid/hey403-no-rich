@@ -1,0 +1,17 @@
+altgraph==0.17.4
+certifi==2025.1.31
+charset-normalizer==3.4.1
+dnspython==2.7.0
+idna==3.10
+iniconfig==2.0.0
+markdown-it-py==3.0.0
+mdurl==0.1.2
+packaging==24.2
+pluggy==1.5.0
+Pygments==2.19.1
+pyinstaller==6.12.0
+pyinstaller-hooks-contrib==2025.1
+pytest==8.3.5
+requests==2.32.3
+rich==13.9.4
+urllib3==2.3.0
