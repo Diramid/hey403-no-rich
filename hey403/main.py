@@ -26,9 +26,9 @@ def main():
             current_dns = get_current_dns()
             dns = [dns for dns in DNS_SERVERS if dns["preferred"] == current_dns]
             if dns:
-                print(f"Current DNS: {dns[0]['name']} ({dns[0]['preferred']} IP)")
+                print(f"{dns[0]['name']} ({dns[0]['preferred']} IP)")
             else:
-                print(f"Current DNS: Custom DNS - {current_dns} (not in DNS_SERVERS)")
+                print(f"Custom DNS - {current_dns} (not in DNS_SERVERS)")
             sys.exit(0)
 
         elif args.unset:
